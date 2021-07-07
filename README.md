@@ -1,8 +1,19 @@
-# MonoRuby
+# Mono Ruby Library
 
-Mono-Node is a Ruby wrapper for <a href="https://mono.co"> Mono </a>  
-For complete information about the API, head to the <a href="https://docs.mono.co/reference">docs</a>.
-<br /><br />
+The Mono Ruby library provides convenient access to the Mono API from
+applications written in Ruby.
+
+For connecting customer accounts in the browser or an app, use the [Mono Connect Widget](https://github.com/withmono/connect.js).
+
+## Documentation
+
+For complete information about the API, head to the [docs](https://docs.mono.co/reference/documentation-intro).
+
+
+## Getting Started
+
+1. Register on the [Mono](https://app.withmono.com/dashboard) website and get your public and secret keys.
+2. Setup your [Mono Connect Widget](https://docs.mono.co/docs/intro-to-mono-connect-widget) with your Mono public key.
 
 ## Installation
 
@@ -20,66 +31,72 @@ Or install it yourself as:
 
     $ gem install mono_ruby
 
-## Getting Started
+## Usage
 
-- Register on <a href="https://app.withmono.com/dashboard"> Mono </a>  website and get your Authorization key.
-- Setup your mono connect with your mono public key.
+The package needs to be configured with your account's `secretKey`, which is
+available in the [Mono Dashboard](https://app.withmono.com/apps).
 
-<br/>
-
-
-## Set Secret Key
 ```ruby
 monoClient = MonoRuby::Mono.new({
-  "secretKey" => "live_sk_xxxxx"
+  "secretKey" => "live_sk_..."
 })
 ```
 
-
 ## Features
 
-- Wallet Balance
-- Get Account ID. from Auth Code.
-- Account Information
-- Account Statement
-- Poll Account Statement PDF
-- Transactions
-- Income Information
-- Identity
-- Sync Data
-- Re-auth Code
-- Institutions
-- Account Unlink
-<br /><br />
+- [Wallet Balance](#wallet)
+- [Get Account ID from Auth Code](#account_id)
+- [Unlink Account](#unlink)
+- [Account Information](#info)
+- [Account Statement](#statement)
+- [Poll Account Statement PDF](#statement_pdf)
+- [Transactions](#transactions)
+- [Credits](#credits)
+- [Debits](#debits)
+- [Income Information](#income)
+- [Identity](#identity)
+- [Sync Data](#sync)
+- [Re-auth Code](#reauth)
+- [Institutions](#institutions)
+
 # Implementation
 
-### - Get Wallet Balance
+## Methods
+
+Once an instance of the client has been created you use the following methods:
+
+
+### <a name="wallet"></a>Get Wallet Balance
 This resource allows you to check the available balance in your Mono wallet
 
 ```ruby
 walletBalance = monoClient.getWalletBalance
 ```
 
-<br />
 
-### - Get Account Id from token
-This resource returns the account id (that identifies the authenticated account) after successful enrolment on the Mono connect widget.
+
+### <a name="account_id"></a>Get Account Id from token
+This resource returns the account id (that identifies the authenticated account) after successful enrolment on the Mono Connect Widget.
 ```ruby
 accountIdGet = monoClient.getAccountId({"code" => "code_ir9FIYb5HvNcb1tVe9Dp"})
 ```
 
-<br />
 
-### - Get Account Information
+### <a name="unlink"></a>Unlink Account
+This resource provides your customers with the option to unlink their financial account(s)
+```ruby
+unlink = monoClient.unlinkAccount({"accountId" => "6094b18f7f87041b24cb8bc1"})
+```
+
+### <a name="info"></a>Get Account Information
 This resource returns the account details with the financial institution.
+
 
 ```ruby
 accountInfo = monoClient.getAccountInformation({"accountId" => accountId})
 ```
 
-<br />
-
-### - Get Account Statement in JSON
+### <a name="statement"></a>Get Account Statement in JSON
 This resource returns the bank statement of the connected financial account in JSON.  
 You can query 1-12 months bank statement in one single call.
 ```ruby
@@ -90,10 +107,7 @@ accountStatement = monoClient.getAccountStatement({
 })
 ```
 
-<br />
-
-
-### - Get Account Statement in PDF
+### Get Account Statement in PDF
 This resource returns the bank statement of the connected financial account in PDF.  
 You can query 1-12 months bank statement in one single call.
 ```ruby
@@ -104,10 +118,7 @@ accountStatement = monoClient.getAccountStatement({
 })
 ```
 
-<br />
-
-
-### - Poll Account Statement in PDF
+### <a name="statement_pdf"></a>Poll Account Statement in PDF
 With this resource, you set the output as PDF, and you can use this endpoint to poll the status
 ```ruby
 pollAccountStatement = monoClient.pollPdfAccountStatementStatus({
@@ -116,11 +127,8 @@ pollAccountStatement = monoClient.pollPdfAccountStatementStatus({
 })
 ```
 
-<br />
-
-### - Get Account Transactions
+### <a name="transactions"></a>Get Account Transactions
 This resource returns the known transactions on the account.
-
 ```ruby
 accountTransactions = monoClient.getAccountTransactions({
     "accountId" => "6094b18f7f87041b24cb8bc1",
@@ -129,73 +137,59 @@ accountTransactions = monoClient.getAccountTransactions({
 })
 ```
 
-<br />
+### <a name="credits"></a>Get Customer's Credits
+This resource returns the historical credits on the account
+```ruby
+customerCredits = monoClient.getCredits({"accountId" => "6094b18f7f87041b24cb8bc1"})
+```
 
+### <a name="debits"></a>Get Customer's Debits
+This resource returns the historical debits on the account
+```ruby
+customerDebits = monoClient.getDebits({"accountId" => "6094b18f7f87041b24cb8bc1"})
+```
 
-### - Get Income Information
+### <a name="income"></a>Get Income Information
 This resource will return income information on the account.
 ```ruby
 accountIncome = monoClient.getIncome({"accountId" => "6094b18f7f87041b24cb8bc1"})
 ```
+**Note:** This is a number estimated by Mono. It is not nesecarrily 100% correct, however, a confidence interval is provided to show the estimations accuracy.
 
-<br />
-
-
-### - Get Account Identity
+### <a name="identity"></a>Get Account Identity
 This resource returns a high level overview of an account identity data.
 ```ruby
 identity = monoClient.getIdentity({"accountId" => "6094b18f7f87041b24cb8bc1"})
 ```
 
-<br />
+**Note:** Not all banks return identity information. [See Coverage](https://docs.mono.co/docs/bvn-coverage)
 
-
-### - Synchronise Data
+### <a name="sync"></a>Synchronise Data
 This resource attempts to Sync data manually.
 ```ruby
 dataSync = monoClient.syncDataManually({"accountId" => "6094b18f7f87041b24cb8bc1"})
 ```
+**Note:** This may require some users to re-authorize their bank account with Mono. [See Re-authorization](https://docs.mono.co/reference/intro#reauthorisation)
 
-<br />
-
-
-### - Get Re-auth Code. 
+### <a name="reauth"></a>Get Re-auth Code.
 This resource returns a Re-auth code which is a mono generated code for the account you want to re-authenticate,
 ```ruby
 reCode = monoClient.reauthCode({"accountId" => "6094b18f7f87041b24cb8bc1"})
 ```
 
-<br />
-
-
-### - Get Financial Institutions
+### <a name="institutions"></a>Get Financial Institutions
 This resource returns the available institutions on Mono
 ```ruby
 institutions = monoClient.getInstitutions
 ```
 
-<br />
-
-### - Unlink Account
-This resource provides your customers with the option to unlink their financial account(s)
-```ruby
-unlink = monoClient.unlinkAccount({"accountId" => "6094b18f7f87041b24cb8bc1"})
-```
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+## Support
+If you're having general trouble with Mono Ruby or your Mono integration, please reach out to us at <hi@mono.co> or come chat with us on Slack. We're proud of our level of service, and we're more than happy to help you out with your integration to Mono.
 
 ## Contributing
+If you would like to contribute to the Mono Ruby Library, please make sure to read our [contributor guidelines](https://github.com/withmono/mono-ruby/tree/master/CONTRIBUTING.md).
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mono_ruby. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/mono_ruby/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the MonoRuby project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/mono_ruby/blob/master/CODE_OF_CONDUCT.md).
+[MIT](https://github.com/withmono/mono-ruby/blob/master/LICENSE) for more information.
