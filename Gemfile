@@ -11,4 +11,4 @@ gem "rspec", "~> 3.0"
 
 gem "rubocop", "~> 0.80"
 
-gem "httparty", "0.18.1"
+gem "httparty", "0.21.0"
